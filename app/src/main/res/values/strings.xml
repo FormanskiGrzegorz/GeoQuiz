@@ -3,4 +3,6 @@
     <string name="false_button">Fałsz</string>
     <string name="true_button">Prawda</string>
     <string name="question_text">Canberra jest stolicą Australii.</string>
+    <string name="correct_toast">Poprawna odpowiedź!</string>
+    <string name="incorrect_toast">Niepoprawna odpowiedź!</string>
 </resources>
