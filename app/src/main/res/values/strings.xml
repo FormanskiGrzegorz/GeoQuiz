@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">GeoQuiz</string>
+    <string name="false_button">Fałsz</string>
+    <string name="true_button">Prawda</string>
+    <string name="question_text">Canberra jest stolicą Australii.</string>
 </resources>
