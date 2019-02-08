@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class QuizActivity extends AppCompatActivity {
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
@@ -16,6 +18,10 @@ public class QuizActivity extends AppCompatActivity {
     private Button mFalseButton;
     private Button mNextButton;
     private TextView mQuestionTextView;
+    // challenge 3.1
+    private ArrayList<Integer> mQuestionAsked = new ArrayList<Integer>(6);
+    // challenge 3.2
+    private int mTrueAnswer = 0;
 
     private Question[] mQuestionBank = new Question[] {
             new Question(R.string.question_australia, true),
@@ -36,6 +42,8 @@ public class QuizActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+            // challenge 3.1
+            mQuestionAsked = savedInstanceState.getIntegerArrayList("myArray");
         }
 
         mQuestionTextView = findViewById(R.id.question_text_view);
@@ -47,6 +55,7 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 checkAnswer(true);
+                mTrueButton.setEnabled(true);
             }
         });
 
@@ -54,6 +63,7 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 checkAnswer(false);
+                mFalseButton.setEnabled(true);
             }
         });
 
@@ -91,6 +101,8 @@ public class QuizActivity extends AppCompatActivity {
         super.onSaveInstanceState(saveInstanceState);
         Log.i(KEY_INDEX, "onSaveInstanceState");
         saveInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+        // challenge 3.1
+        saveInstanceState.putIntegerArrayList("myArray", mQuestionAsked);
     }
 
     @Override
@@ -108,13 +120,38 @@ public class QuizActivity extends AppCompatActivity {
     private void updateQuestion() {
         int question = mQuestionBank[mCurrentIndex].getTextResId();
         mQuestionTextView.setText(question);
+
+        /* challenge 3.1................*/
+        mFalseButton.setVisibility(View.VISIBLE);
+        mTrueButton.setVisibility(View.VISIBLE);
+
+        for (Integer i = 0; i < mQuestionAsked.size(); i++) {
+            if (mCurrentIndex == mQuestionAsked.get(i)) {
+                mFalseButton.setVisibility(View.INVISIBLE);
+                mTrueButton.setVisibility(View.INVISIBLE);
+            }
+        }
+        /*...............................*/
+        // challenge 3.2
+        int resultResId = (mTrueAnswer*100) / 6;
+        if (mQuestionAsked.size() > 5) {
+            Toast.makeText(this, Integer.toString(resultResId) + "% correct answers", Toast.LENGTH_LONG)
+                    .show();
+        }
     }
 
     private void checkAnswer(boolean userPressedTrue) {
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+        // challenge 3.1
+        mQuestionAsked.add(mCurrentIndex);
+        mFalseButton.setVisibility(View.INVISIBLE);
+        mTrueButton.setVisibility(View.INVISIBLE);
+        /*...............................*/
         int messageResId = 0;
         if (userPressedTrue == answerIsTrue) {
             messageResId = R.string.correct_toast;
+            // challenge 3.2
+            mTrueAnswer = mTrueAnswer + 1;
         } else {
             messageResId = R.string.incorrect_toast;
         }
